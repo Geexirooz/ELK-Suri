@@ -70,10 +70,6 @@ create_keystore() {
 	printf "=====================================================\n"
 	elasticsearch-keystore create >>/dev/null
 
-	## Setting Bootstrap Password
-	echo "Setting bootstrap password..."
-	(echo "$ELASTIC_PASSWORD" | elasticsearch-keystore add -x 'bootstrap.password')
-
 	# Replace current Keystore
 	if [ -f "$OUTPUT_FILE" ]; then
 		echo "Remove old elasticsearch.keystore"
