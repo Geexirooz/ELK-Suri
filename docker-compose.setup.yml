@@ -3,7 +3,10 @@ version: '3.5'
 services:
   certs:
     container_name: certs
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    build:
+      context: elasticsearch-with-openssl/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
     command: bash ${ELASTIC_DIR}/config/setup.sh
     user: "0"
     volumes:

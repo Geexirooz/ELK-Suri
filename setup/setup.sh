@@ -16,8 +16,6 @@ BUNDLE_ZIP=$OUTPUT_DIR/bundle.zip
 CERT_KEYSTORES_ZIP=$OUTPUT_DIR/cert_keystores.zip
 HTTP_ZIP=$OUTPUT_DIR/http.zip
 
-apt-get install unzip openssl -y
-
 create_self_signed_ca()
 {
     printf "====== Creating Self-Signed Certificate Authority ======\n"
@@ -40,14 +38,6 @@ create_certificates()
     echo "Creating crt and key certificates"
     bin/elasticsearch-certutil cert --silent --in $CONFIG_DIR/instances.yml --out $BUNDLE_ZIP --ca-cert $CA_CERT --ca-key $CA_KEY --ca-pass "" --pem
     unzip $BUNDLE_ZIP -d $CERT_DIR
-}
-
-setup_passwords()
-{
-    printf "====== Setting up Default User Passwords ======\n"
-    printf "=====================================================\n"
-    
-    bin/elasticsearch-setup-passwords auto -u "https://0.0.0.0:9200" -v --batch
 }
 
 create_keystore()
@@ -109,7 +99,6 @@ create_directory_structure
 create_keystore
 create_self_signed_ca
 create_certificates
-setup_passwords
 
 openssl pkcs8 -in /secrets/certificates/logstash/logstash.key -topk8 -nocrypt -out /secrets/certificates/logstash/logstash.pkcs8.key
 
