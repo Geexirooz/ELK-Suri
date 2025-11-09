@@ -46,7 +46,7 @@ Before we build or create our containers we first need to create our keystore an
 To do so you simply run the following command first:
 
 ```bash
-docker-compose -f docker-compose.setup.yml run --rm certs
+docker compose -f docker-compose.setup.yml run --rm certs
 ```
 
 ## Running a development environment
@@ -54,7 +54,7 @@ docker-compose -f docker-compose.setup.yml run --rm certs
 Now, that you have your keys/certs and passwords set we can then just restart the containers by running:
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 You should be able to login into the ELK stack and be on your way.
