@@ -9,4 +9,3 @@ echo "[Suricata] Updating rule sources..."
 
 echo "[Suricata] Starting Suricata..."
 exec /usr/bin/suricata --user suricata --group suricata "$@"
-
