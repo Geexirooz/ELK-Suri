@@ -1,2 +1,8 @@
-secrets/*
+# Real .env file
 .env
+
+# ELK Certs/keystore/creds
+secrets/*
+
+# Suricata logs
+suricata/logs/*

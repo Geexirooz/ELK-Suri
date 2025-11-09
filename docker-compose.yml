@@ -1,8 +1,5 @@
 version: '3.5'
 
-# will contain all elasticsearch data.
-volumes:
-  data:
 
 secrets:
   ca.crt:
@@ -78,7 +75,7 @@ services:
     build:
       context: kibana/
       args:
-        ELK_VERSION: $ELK_VERSION
+        ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
     volumes:
       - ./kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
@@ -106,6 +103,33 @@ services:
       - elk
     depends_on: 
       - elasticsearch
+
+  suricata:
+    build:
+      context: suricata/
+      args:
+        SURICATA_VERSION: ${SURICATA_VERSION}
+    container_name: suricata
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_NICE
+    volumes:
+      - suricata-rules:/var/lib/suricata
+      - ./suricata/config/suricata.yaml:${SURICATA_DIR}/suricata.yaml
+      - ./suricata/logs:/var/log/suricata
+      - ./suricata/entrypoint.sh:/entrypoint.sh:ro
+    command: ["/entrypoint.sh", "-i", "${INTERFACE}"]
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+
+volumes:
+  # will contain all Suricata rules for incremental updates
+  suricata-rules:
+  # will contain all elasticsearch data.
+  data:
 
 networks:
   elk:

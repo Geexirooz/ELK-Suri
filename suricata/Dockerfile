@@ -1,0 +1,3 @@
+ARG SURICATA_VERSION
+
+FROM jasonish/suricata:${SURICATA_VERSION}
