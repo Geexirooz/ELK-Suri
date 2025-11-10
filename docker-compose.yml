@@ -108,6 +108,8 @@ services:
       context: suricata/
       args:
         SURICATA_VERSION: ${SURICATA_VERSION}
+    environment:
+      SURICATA_RULES_SOURCES: ${SURICATA_RULES_SOURCES}
     container_name: suricata
     network_mode: host
     cap_add:
