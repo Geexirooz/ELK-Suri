@@ -1,4 +1,4 @@
-# elk-suri
+# ELK-Suri
 This docker-compose project will assist with setting up and creating a ELK stack (with no L for now) using self-signed TLS certificates.
 This repo's idea comes from [this](https://github.com/swimlane/elk-tls-docker/tree/master) great repository
 
