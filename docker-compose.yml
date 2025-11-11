@@ -80,14 +80,14 @@ services:
       args:
         ELK_VERSION: ${ELK_VERSION}
     restart: unless-stopped
-    volumes:
-      - ./kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
     environment:
       CONFIG_DIR: ${KIBANA_DIR}/config
       ELASTIC_USERNAME: ${KIBANA_USERNAME}
       ELASTIC_PASSWORD: ${KIBANA_PASSWORD}
       ENCRYPTION_KEY: ${XPACK_ENCRYPTION_KEY}
       KIBANA_URL: ${KIBANA_URL}
+    volumes:
+      - ./kibana/config/kibana.yml:${KIBANA_DIR}/config/kibana.yml:ro
     secrets:
       - source: ca.crt
         target: ${KIBANA_DIR}/config/ca.crt
@@ -95,13 +95,13 @@ services:
         target: ${KIBANA_DIR}/config/kibana.crt
       - source: kibana.key
         target: ${KIBANA_DIR}/config/kibana.key
+    ports:
+      - "5601:5601"
     healthcheck:
       test: curl -s https://kibana:5601 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
       timeout: 10s
       retries: 5
-    ports:
-      - "5601:5601"
     networks:
       - elk
     depends_on: 
@@ -114,17 +114,17 @@ services:
       context: filebeat/
       args:
         ELK_VERSION: ${ELK_VERSION}
-    restart: unless-stopped
     command: ["/entrypoint.sh"]
-    volumes:
-      - ./filebeat/entrypoint.sh:/entrypoint.sh:ro
-      - ./filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml
-      - ./suricata/logs:/var/log/suricata:ro
+    restart: unless-stopped
     environment:
       CONFIG_DIR: ${FILEBEAT_DIR}/config
       LS_JAVA_OPTS: "-Xmx${FILEBEAT_HEAP} -Xms${FILEBEAT_HEAP}"
       ELASTIC_USERNAME: ${BEATS_USERNAME}
       ELASTIC_PASSWORD: ${BEATS_PASSWORD}
+    volumes:
+      - ./filebeat/entrypoint.sh:/entrypoint.sh:ro
+      - ./filebeat/config/filebeat.yml:${FILEBEAT_DIR}/filebeat.yml
+      - ./suricata/logs:/var/log/suricata:ro
     secrets:
       - source: ca.crt
         target: ${FILEBEAT_DIR}/config/ca.crt
@@ -132,8 +132,6 @@ services:
         target: ${FILEBEAT_DIR}/config/filebeat.crt
       - source: filebeat.key
         target: ${FILEBEAT_DIR}/config/filebeat.key
-    ports:
-      - "9000:9000"
     networks:
       - elk
     depends_on:
@@ -141,25 +139,26 @@ services:
       - suricata
 
   suricata:
+    container_name: suricata
+    hostname: suricata
     build:
       context: suricata/
       args:
         SURICATA_VERSION: ${SURICATA_VERSION}
+    command: ["/entrypoint.sh", "-i", "${INTERFACE}"]
+    restart: unless-stopped
     environment:
       SURICATA_RULES_SOURCES: ${SURICATA_RULES_SOURCES}
-    container_name: suricata
-    network_mode: host
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-      - SYS_NICE
     volumes:
       - suricata-rules:/var/lib/suricata
       - ./suricata/config/suricata.yaml:${SURICATA_DIR}/suricata.yaml
       - ./suricata/logs:/var/log/suricata
       - ./suricata/entrypoint.sh:/entrypoint.sh:ro
-    command: ["/entrypoint.sh", "-i", "${INTERFACE}"]
-    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_NICE
+    network_mode: host
     depends_on:
       - elasticsearch
 
