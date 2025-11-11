@@ -73,6 +73,10 @@ To remove all images from your system run: ```docker rmi $(docker images -a -q)`
 
 To remove all volumes from your system run: ```docker volume prune```
 
+## TODOs
+1. Beats user has superuser access which needs to be downgraded (required for indexing and dashboard setup for now).
+2. Suricata container is slows on startup due to rules update, it should be done less aggresively.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details
