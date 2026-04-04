@@ -67,6 +67,14 @@ docker compose up -d
 
 You should be able to login into the ELK stack with `SUPERUSER_USERNAME` user from your `.env` file.
 
+## Fleet Server
+
+To run Fleet Server, generate the service token in Kibana, add it to your `.env` file, and then run the following command.
+
+```
+docker compose -f docker-compose.fleet.yml up -d
+```
+
 ## Handy commands
 
 To remove all images from your system run: ```docker rmi $(docker images -a -q)```
